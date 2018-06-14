@@ -3,10 +3,12 @@ const ddb = new AWS.DynamoDB.DocumentClient();
 exports.handler = function (event, context, callback) {
 
 	let response = {
-		"isBase64Encoded": 1,
+		"isBase64Encoded": false,
 		"statusCode": 200,
 		"headers": {
-			"headerName": "headerValue"
+			"Access-Control-Allow-Origin": "*",
+			"MyHeader":"Yo",
+			"Access-Control-Allow-Headers":"*"
 		},
 		"body": "..."
 	};
@@ -18,7 +20,7 @@ exports.handler = function (event, context, callback) {
 		TableName: 'otherb3', ExpressionAttributeValues: { ':it': itemType }, FilterExpression: 'itemType = :it'
 	}, function (err, data) {
 		if (!err && data.Items) {
-			response.body = JSON.stringify(data.Items);
+			response.body = Buffer.from(JSON.stringify(data.Items)).toString("base64");
 		} else {
 			response.statusCode = 404;
 			response.body = "No items found";
